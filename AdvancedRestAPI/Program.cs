@@ -7,8 +7,11 @@ using AdvancedRestAPI.Validators;
 using AspNetCoreRateLimit;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +23,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 #region Fluent Validation Services
-builder.Services.AddValidatorsFromAssemblyContaining<UserDTOValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CustomerDTOValidator>();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
 #endregion
@@ -35,7 +38,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 #region DI Services
 builder.Services.AddAutoMapper(typeof(AutomapperConfig));
-builder.Services.AddScoped<IUser, UserService>();
+builder.Services.AddScoped<ICustomer, CustomerService>();
 builder.Services.AddMemoryCache();
 builder.Services.Configure<IpRateLimitOptions>((options) =>
 {
@@ -52,10 +55,45 @@ builder.Services.Configure<IpRateLimitOptions>((options) =>
 });
 builder.Services.AddInMemoryRateLimiting();
 builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+
 #endregion
 
+#region Carrega JWTSettings
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+var key = builder.Configuration.GetSection("JwtSettings").GetValue<string>("PrivateKey");
+builder.Services.AddTransient<TokenService>();
+#endregion
+
+#region Authentication and Authorization services
+builder.Services.AddAuthentication(x=>
+{
+
+    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(x=>
+{
+    x.TokenValidationParameters =
+    new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    {
+
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        
+    };
+});
+
+
+
+
+    builder.Services.AddAuthorization();
+#endregion
 
 var app = builder.Build();
+app.UseAuthentication();
+app.UseAuthorization();
+
+
 app.UseIpRateLimiting();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -66,7 +104,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
 
 app.MapControllers();
 

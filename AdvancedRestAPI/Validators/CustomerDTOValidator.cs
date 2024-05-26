@@ -3,23 +3,23 @@ using FluentValidation;
 
 namespace AdvancedRestAPI.Validators
 {
-    public class UserDTOValidator : AbstractValidator<UserDTO>
+    public class CustomerDTOValidator : AbstractValidator<CustomerDTO>
     {
-        public UserDTOValidator()
+        public CustomerDTOValidator()
         {
-            RuleFor(user => user.Name)
+            RuleFor(c => c.Name)
             .NotEmpty().WithMessage("Name is required")
             .Length(10, 150).WithMessage("Name must be between 2 and 150 characters");
 
-            RuleFor(user => user.Address)
+            RuleFor(c => c.Address)
             .NotEmpty().WithMessage("Address is required")
             .Length(10, 250).WithMessage("Address must be between 10 and 250 characters");
 
-            RuleFor(user => user.Phone)
+            RuleFor(c => c.Phone)
             .NotEmpty().WithMessage("Phone is required")
             .Matches(@"^\d{11}$").WithMessage("Phone must be a valid 11-digit number");
 
-            RuleFor(user => user.BloodGroup)
+            RuleFor(c => c.BloodGroup)
             .NotEmpty().WithMessage("BloodGroup is required")
             .Length(2,3).WithMessage("BloodGroup must be between 2 and 3 characters");
 

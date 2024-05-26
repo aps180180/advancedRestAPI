@@ -11,16 +11,16 @@ namespace AdvancedRestAPI.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class CustomerController : ControllerBase
     {
-        private IUser _userService;
+        private ICustomer _customerService;
        
-        public UsersController( IUser userService)
+        public CustomerController( ICustomer customerService)
         {
-                _userService = userService;
+                _customerService = customerService;
                 
         }
-        // GET: api/<UsersController>
+        // GET: api/v1/<CustomerController>
         [HttpGet]
         [EnableQuery]
         public async Task<IActionResult> Get(int? pageNumber, int? pageSize)
@@ -28,17 +28,17 @@ namespace AdvancedRestAPI.Controllers
             int currentPageNumber = pageNumber ?? 1;
             int currentPageSize = pageNumber ?? 5;
            
-            var result = await _userService.GetAllUsers(currentPageNumber,currentPageSize);
+            var result = await _customerService.GetAllCustomers(currentPageNumber,currentPageSize);
 
             if (result.isSuccess)
             {
                 var response = new
                 {
-                    Users = result.Users.Items,
-                    TotalCount = result.Users.TotalCount,
-                    CurrentPage = result.Users.CurrentPage,
-                    PageSize = result.Users.PageSize,
-                    TotalPages = result.Users.TotalPages
+                    Customers = result.Customers.Items,
+                    TotalCount = result.Customers.TotalCount,
+                    CurrentPage = result.Customers.CurrentPage,
+                    PageSize = result.Customers.PageSize,
+                    TotalPages = result.Customers.TotalPages
                 };
 
                 return Ok(response);
@@ -48,22 +48,22 @@ namespace AdvancedRestAPI.Controllers
         }
 
         [HttpGet("{name}")]
-        public async Task<IActionResult> GetUsersByName(string name,  int? pageNumber, int? pageSize)
+        public async Task<IActionResult> GetCustomersByName(string name,  int? pageNumber, int? pageSize)
         {
             int currentPageNumber = pageNumber ?? 1;
             int currentPageSize = pageNumber ?? 5;
 
-            var result = await _userService.GetUsersByNamePaged(name, currentPageNumber, currentPageSize);
+            var result = await _customerService.GetCustomersByNamePaged(name, currentPageNumber, currentPageSize);
 
             if (result.isSuccess)
             {
                 var response = new
                 {
-                    Users = result.Users.Items,
-                    TotalCount = result.Users.TotalCount,
-                    CurrentPage = result.Users.CurrentPage,
-                    PageSize = result.Users.PageSize,
-                    TotalPages = result.Users.TotalPages
+                    Customers = result.Customers.Items,
+                    TotalCount = result.Customers.TotalCount,
+                    CurrentPage = result.Customers.CurrentPage,
+                    PageSize = result.Customers.PageSize,
+                    TotalPages = result.Customers.TotalPages
                 };
 
                 return Ok(response);
@@ -71,28 +71,28 @@ namespace AdvancedRestAPI.Controllers
 
             return NotFound(result.ErrorMessage);
         }
-        // GET api/<UsersController>/5
+        // GET api/v1/<CustomerController>/5
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var result = await _userService.GetUserById(id);
+            var result = await _customerService.GetCustomerById(id);
             if (result.isSuccess)
             {
-                return Ok(result.User);
+                return Ok(result.Customer);
             }
             return NotFound(result.ErrorMessage);
 
         }
-        // POST api/<UsersController>
+        // POST api/v1/<CustomerController>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] UserDTO user)
+        public async Task<IActionResult> Post([FromBody] CustomerDTO customer)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var result= await _userService.AddUser(user);
+            var result= await _customerService.AddCustomer(customer);
             if (result.isSuccess) 
             {
                 return StatusCode(StatusCodes.Status201Created);
@@ -100,16 +100,16 @@ namespace AdvancedRestAPI.Controllers
             return BadRequest(result.ErrorMessage);
         }
 
-        // PUT api/<UsersController>/5
+        // PUT api/v1/<CustomerController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(Guid id, [FromBody] UserDTO user)
+        public async Task<IActionResult> Put(Guid id, [FromBody] CustomerDTO customer)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var result =  await _userService.UpdateUser(id, user);
+            var result =  await _customerService.UpdateCustomer(id, customer);
             if (result.isSuccess) 
             {
                 return NoContent();
@@ -117,11 +117,11 @@ namespace AdvancedRestAPI.Controllers
             return BadRequest(result.ErrorMessage);
         }
 
-        // DELETE api/<UsersController>/5
+        // DELETE api/v1/<CustomerController>/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var result = await _userService.DeleteUser(id);
+            var result = await _customerService.DeleteCustomer(id);
             if(result.isSuccess) 
             {
                 return NoContent();

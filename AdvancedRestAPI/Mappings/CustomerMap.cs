@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AdvancedRestAPI.Mappings
 {
-    public class UserMap : IEntityTypeConfiguration<User>
+    public class CustomerMap : IEntityTypeConfiguration<Customer>
     {
-        public void Configure(EntityTypeBuilder<User> builder)
+        public void Configure(EntityTypeBuilder<Customer> builder)
         {
-            builder.ToTable("User");
+            builder.ToTable("Customer");
             builder.HasKey(x => x.Id);  
             
             builder.Property(x=> x.Name)

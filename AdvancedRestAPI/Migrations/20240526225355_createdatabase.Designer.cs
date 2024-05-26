@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdvancedRestAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240413182526_createdatabase")]
+    [Migration("20240526225355_createdatabase")]
     partial class createdatabase
     {
         /// <inheritdoc />
@@ -25,7 +25,7 @@ namespace AdvancedRestAPI.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("AdvancedRestAPI.Models.User", b =>
+            modelBuilder.Entity("AdvancedRestAPI.Models.Customer", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -55,7 +55,7 @@ namespace AdvancedRestAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User", (string)null);
+                    b.ToTable("Customer", (string)null);
                 });
 #pragma warning restore 612, 618
         }
