@@ -1,0 +1,1 @@
+This REST API addresses important concepts such as Rate Limiting, Result Pattern, the use of DTOs with Automapper, Dependency Injection, Fluent API for database modeling, and Fluent Validation for property validation.
